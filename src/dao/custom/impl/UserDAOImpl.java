@@ -1,6 +1,6 @@
 package dao.custom.impl;
 
-import Utils.Constants;
+import util.Constants;
 import dao.custom.UserDAO;
 import database.Database;
 import dto.UserDTO;
@@ -61,9 +61,9 @@ public class UserDAOImpl implements UserDAO {
             ResultSet rs = ps.executeQuery();
 
             if(rs.next()){
-                user = new UserDTO( rs.getString(Constants.DATABASE_FIELD_USERNAME),
-                                    rs.getString(Constants.DATABASE_FIELD_EMAIL),
-                                    rs.getString(Constants.DATABASE_FIELD_ADDRESS),
+                user = new UserDTO( rs.getString( Constants.DATABASE_FIELD_USERNAME ),
+                                    rs.getString( Constants.DATABASE_FIELD_EMAIL ),
+                                    rs.getString( Constants.DATABASE_FIELD_ADDRESS ),
                                     rs.getString( Constants.DATABASE_FIELD_PASSWORD )
                 );
             }else {

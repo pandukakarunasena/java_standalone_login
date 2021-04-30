@@ -1,15 +1,17 @@
 package database;
 
+import util.Constants;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class Database {
 
-    private final static String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private final static String URL = "jdbc:mysql://localhost:3306/test";
-    private final static String USERNAME = "root";
-    private final static String PASSWORD = "mysql";
     private static Connection con = null;
 
     //singleton
@@ -31,12 +33,34 @@ public class Database {
     }
 
     private void setConnection() {
-        try {
-            Class.forName( DRIVER );
-            this.con = DriverManager.getConnection( URL, USERNAME, PASSWORD );
 
-        } catch ( ClassNotFoundException | SQLException e ) {
+        File configFile = new File( Constants.DATABASE_CONFIG_FILE_PATH );
+        FileReader reader = null;
+
+        try {
+            reader = new FileReader( configFile );
+            Properties props = new Properties();
+            props.load( reader );
+
+            Class.forName( props.getProperty( "driver" ) );
+
+            this.con = DriverManager.getConnection(
+                    props.getProperty( "url" ),
+                    props.getProperty( "user" ),
+                    props.getProperty( "password" )
+            );
+
+        } catch ( ClassNotFoundException | SQLException | IOException e ) {
             e.printStackTrace();
+
+        } finally {
+            try {
+                reader.close();
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
         }
     }
+
+
 }

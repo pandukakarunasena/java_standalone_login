@@ -1,6 +1,6 @@
 package controllers;
 
-import Utils.Constants;
+import util.Constants;
 import authentication.IPasswordManager;
 import authentication.custom.impl.PasswordManager;
 import dao.custom.UserDAO;
@@ -9,9 +9,11 @@ import exceptions.InvalidCredentialsException;
 import exceptions.UserCreationFailedException;
 import exceptions.UserInputInvalidException;
 import exceptions.UserNotFoundException;
+import dto.UserDTO;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import dto.UserDTO;
+
 
 public class UserController {
 
@@ -71,7 +73,7 @@ public class UserController {
                 throw new UserInputInvalidException( Constants.INVALID_INPUT_MESSAGE );
             }
 
-            UserDTO user = new UserDTO(userName, email, address, passwordManager.hashPassword( password));
+            UserDTO user = new UserDTO(userName, email, address, passwordManager.hashPassword( password ));
             boolean userAdded = addUserToDatabase(user);
 
             if(!userAdded){
@@ -96,19 +98,19 @@ public class UserController {
                 throw new UserInputInvalidException( Constants.INVALID_INPUT_MESSAGE );
             }
 
-            UserDTO user = getUserFromDatabase( userName, email);
+            UserDTO existingUser = getUserFromDatabase( userName, email);
 
-            if( user == null ){
+            if( existingUser == null ){
                 throw new UserNotFoundException( Constants.USER_NOT_FOUND_MESSAGE );
             }
 
-            boolean passwordMatches = passwordManager.compare( password, user.getPassword());
+            boolean passwordMatches = passwordManager.compare( password, existingUser.getPassword());
 
             if( !passwordMatches ){
                 throw new InvalidCredentialsException( Constants.INVALID_CREDENTIALS_PROVIDED_MESSAGE );
             }
 
-            displayUserData( user );
+            displayUserData( existingUser );
         }
     }
 
