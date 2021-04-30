@@ -5,6 +5,10 @@ import authentication.IPasswordManager;
 import authentication.custom.impl.PasswordManager;
 import dao.custom.UserDAO;
 import dao.custom.impl.UserDAOImpl;
+import exceptions.InvalidCredentialsException;
+import exceptions.UserCreationFailedException;
+import exceptions.UserInputInvalidException;
+import exceptions.UserNotFoundException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import dto.UserDTO;
@@ -13,7 +17,16 @@ public class UserController {
 
     public void start(){
         int selection  = selectTheMode();
-        processUserInput( selection );
+
+        try {
+            processUserInput( selection );
+        } catch ( UserNotFoundException |
+                UserInputInvalidException |
+                InvalidCredentialsException |
+                UserCreationFailedException e ) {
+            e.printStackTrace();
+        }
+
     }
 
     private  int selectTheMode() {
@@ -34,7 +47,9 @@ public class UserController {
         return selection;
     }
 
-    private  void  processUserInput(int selection){
+    private  void  processUserInput(int selection)
+            throws UserInputInvalidException, UserCreationFailedException, UserNotFoundException, InvalidCredentialsException{
+
         Scanner input = new Scanner( System.in );
         IPasswordManager passwordManager = new PasswordManager();
 
@@ -53,21 +68,19 @@ public class UserController {
             boolean isValid = validateUserDetails(userName, email, address, password);
 
             if( !isValid ){
-                System.out.println( Constants.INVALID_INPUT_MESSAGE );
-                return;
+                throw new UserInputInvalidException( Constants.INVALID_INPUT_MESSAGE );
             }
 
             UserDTO user = new UserDTO(userName, email, address, passwordManager.hashPassword( password));
             boolean userAdded = addUserToDatabase(user);
 
             if(!userAdded){
-                System.out.println(Constants.NEW_USER_CREATION_FAILED_MESSAGE);
-                return;
+                throw new UserCreationFailedException( Constants.NEW_USER_CREATION_FAILED_MESSAGE );
             }
 
-            System.out.println(Constants.USER_ADDED_SUCCESSFULLY_MESSAGE);
+            System.out.println( Constants.USER_ADDED_SUCCESSFULLY_MESSAGE );
 
-        }else if(selection == Constants.SELECT_LOGIN_MODE){
+        }else if( selection == Constants.SELECT_LOGIN_MODE ){
             //display Login
             System.out.println("LOGIN\n");
             System.out.print("USER NAME: ");
@@ -77,60 +90,57 @@ public class UserController {
             System.out.print("PASSWORD: ");
             String password = input.nextLine();
 
-            boolean isValid = validateUserDetails(userName, email, password);
+            boolean isValid = validateUserDetails( userName, email, password );
 
-            if(!isValid){
-                System.out.println(Constants.INVALID_INPUT_MESSAGE);
-                return;
+            if( !isValid ){
+                throw new UserInputInvalidException( Constants.INVALID_INPUT_MESSAGE );
             }
 
             UserDTO user = getUserFromDatabase( userName, email);
 
-            if(user == null){
-                System.out.println(Constants.USER_NOT_FOUND_MESSAGE);
-                return;
+            if( user == null ){
+                throw new UserNotFoundException( Constants.USER_NOT_FOUND_MESSAGE );
             }
 
             boolean passwordMatches = passwordManager.compare( password, user.getPassword());
 
-            if(!passwordMatches){
-                System.out.println(Constants.INVALID_CREDENTIALS_PROVIDED_MESSAGE);
-                return;
+            if( !passwordMatches ){
+                throw new InvalidCredentialsException( Constants.INVALID_CREDENTIALS_PROVIDED_MESSAGE );
             }
 
             displayUserData( user );
         }
     }
 
-    private  boolean validateUserDetails(String... userDetails){
-        for(String userDetail: userDetails){
-            if(userDetail.isEmpty()){
+    private  boolean validateUserDetails( String... userDetails ){
+        for( String userDetail: userDetails ){
+            if( userDetail.isEmpty() ){
                 return false;
             }
         }
         return true;
     }
 
-    private  boolean addUserToDatabase(UserDTO user){
+    private  boolean addUserToDatabase( UserDTO user ){
         UserDAO userDAO = new UserDAOImpl();
         return userDAO.addUser( user );
     }
 
-    private  UserDTO  getUserFromDatabase(String userName,String email){
+    private  UserDTO  getUserFromDatabase( String userName,String email ){
         UserDAO userDAO = new UserDAOImpl();
-        return userDAO.searchUser( userName,email);
+        return userDAO.searchUser( userName,email );
     }
 
-    private  void displayUserData(UserDTO user){
-        System.out.println();
-        System.out.println("Your are Logged in as: ");
+    private  void displayUserData( UserDTO user ){
+
+        System.out.println("\nYour are Logged in as: ");
         System.out.print("User Name: ");
-        System.out.println(user.getUserName());
+        System.out.println( user.getUserName() );
 
         System.out.print("Email: ");
-        System.out.println(user.getEmail());
+        System.out.println( user.getEmail() );
 
         System.out.print("Address: ");
-        System.out.println(user.getAddress());
+        System.out.println( user.getAddress() );
     }
 }

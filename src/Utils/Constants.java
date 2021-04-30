@@ -9,7 +9,6 @@ public final class Constants {
     public static final String INSERT_NEW_USER_QUERY = "INSERT INTO user(username, email, address, password) VALUES (?,?,?,?)";
     public static final String GET_USER_QUERY = "SELECT * FROM user WHERE user.username=? AND user.email=?";
 
-
     //Exception handling messages
     public static final String USER_ALREADY_EXISTS_MESSAGE = "USER ALREADY EXIST";
     public static final String USER_NOT_FOUND_MESSAGE = "USER NOT FOUND";
@@ -18,15 +17,9 @@ public final class Constants {
     public static final String USER_ADDED_SUCCESSFULLY_MESSAGE = "USER ADDED SUCCESSFULLY";
     public static final String INVALID_CREDENTIALS_PROVIDED_MESSAGE = "INVALID CREDENTIALS";
 
-
-
-
-
-
     //database table column names
     public static final String DATABASE_FIELD_USERNAME= "username";
     public static final String DATABASE_FIELD_EMAIL= "username";
     public static final String DATABASE_FIELD_ADDRESS= "username";
     public static final String DATABASE_FIELD_PASSWORD= "username";
-
 }
