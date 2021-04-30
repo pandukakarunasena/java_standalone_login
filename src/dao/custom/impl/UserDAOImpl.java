@@ -1,5 +1,6 @@
 package dao.custom.impl;
 
+import Utils.Constants;
 import dao.custom.UserDAO;
 import database.Database;
 import dto.UserDTO;
@@ -17,7 +18,7 @@ public class UserDAOImpl implements UserDAO {
     public boolean addUser( UserDTO user ){
         PreparedStatement ps = null;
         try {
-            String addUserQuery = "INSERT INTO user(username, email, address, password) VALUES (?,?,?,?)";
+            String addUserQuery = Constants.INSERT_NEW_USER_QUERY;
             ps = Database.getInstance().getConnection().prepareStatement(addUserQuery);
             UserDTO existingUser = searchUser( user.getUserName(), user.getEmail());
 
@@ -28,7 +29,7 @@ public class UserDAOImpl implements UserDAO {
                 ps.setString(4, user.getPassword());
                 ps.execute();
             }else {
-                throw new UserExistingException("USER ALREADY EXIST");
+                throw new UserExistingException(Constants.USER_ALREADY_EXISTS_MESSAGE);
             }
 
 
@@ -53,20 +54,20 @@ public class UserDAOImpl implements UserDAO {
         UserDTO user = null;
         PreparedStatement ps = null;
         try {
-            String checkUserQuery = "SELECT * FROM user WHERE user.username=? AND user.email=?";
-            ps = Database.getInstance().getConnection().prepareStatement(checkUserQuery);
+            String getNewUserByUsernameAndEmailQuery = Constants.GET_USER_QUERY;
+            ps = Database.getInstance().getConnection().prepareStatement(getNewUserByUsernameAndEmailQuery);
             ps.setString(1,userName);
             ps.setString( 2, email );
             ResultSet rs = ps.executeQuery();
 
             if(rs.next()){
-                user = new UserDTO( rs.getString("username"),
-                                    rs.getString("email"),
-                                    rs.getString("address"),
-                                    rs.getString( "password" )
+                user = new UserDTO( rs.getString(Constants.DATABASE_FIELD_USERNAME),
+                                    rs.getString(Constants.DATABASE_FIELD_EMAIL),
+                                    rs.getString(Constants.DATABASE_FIELD_ADDRESS),
+                                    rs.getString( Constants.DATABASE_FIELD_PASSWORD )
                 );
             }else {
-                throw new UserNotFoundException( "USER NOT FOUND" );
+                throw new UserNotFoundException( Constants.USER_NOT_FOUND_MESSAGE );
             }
 
         } catch( SQLException | UserNotFoundException e){

@@ -1,5 +1,6 @@
 package controllers;
 
+import Utils.Constants;
 import authentication.IPasswordManager;
 import authentication.custom.impl.PasswordManager;
 import dao.custom.UserDAO;
@@ -9,8 +10,6 @@ import java.util.Scanner;
 import dto.UserDTO;
 
 public class UserController {
-     final int ADD_USER = 1;
-     final int LOGIN = 2;
 
     public void start(){
         int selection  = selectTheMode();
@@ -39,7 +38,7 @@ public class UserController {
         Scanner input = new Scanner( System.in );
         IPasswordManager passwordManager = new PasswordManager();
 
-        if(selection == ADD_USER){
+        if(selection == Constants.SELECT_ADD_USER_MODE){
             //display add user form
             System.out.println("\nADD NEW USER\n");
             System.out.print("USER NAME: ");
@@ -53,8 +52,8 @@ public class UserController {
 
             boolean isValid = validateUserDetails(userName, email, address, password);
 
-            if(!isValid){
-                System.out.println("INVALID INPUT");
+            if( !isValid ){
+                System.out.println( Constants.INVALID_INPUT_MESSAGE );
                 return;
             }
 
@@ -62,13 +61,13 @@ public class UserController {
             boolean userAdded = addUserToDatabase(user);
 
             if(!userAdded){
-                System.out.println("NEW USER CREATION FAILED");
+                System.out.println(Constants.NEW_USER_CREATION_FAILED_MESSAGE);
                 return;
             }
 
-            System.out.println("USER ADDED SUCCESSFULLY");
+            System.out.println(Constants.USER_ADDED_SUCCESSFULLY_MESSAGE);
 
-        }else if(selection == LOGIN){
+        }else if(selection == Constants.SELECT_LOGIN_MODE){
             //display Login
             System.out.println("LOGIN\n");
             System.out.print("USER NAME: ");
@@ -81,21 +80,21 @@ public class UserController {
             boolean isValid = validateUserDetails(userName, email, password);
 
             if(!isValid){
-                System.out.println("INVALID INPUT");
+                System.out.println(Constants.INVALID_INPUT_MESSAGE);
                 return;
             }
 
             UserDTO user = getUserFromDatabase( userName, email);
 
             if(user == null){
-                System.out.println("USER NOT FOUND");
+                System.out.println(Constants.USER_NOT_FOUND_MESSAGE);
                 return;
             }
 
             boolean passwordMatches = passwordManager.compare( password, user.getPassword());
 
             if(!passwordMatches){
-                System.out.println("INVALID CREDENTIALS");
+                System.out.println(Constants.INVALID_CREDENTIALS_PROVIDED_MESSAGE);
                 return;
             }
 
