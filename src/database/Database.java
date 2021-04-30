@@ -13,8 +13,6 @@ import java.util.Properties;
 public class Database {
 
     private static Connection con = null;
-
-    //singleton
     private static Database db = null;
 
     private Database(){
@@ -32,6 +30,11 @@ public class Database {
         return con;
     }
 
+
+    /**
+     * setting up the database connection by reading the config.properties file
+     * assign the connection to this.con
+     */
     private void setConnection() {
 
         File configFile = new File( Constants.DATABASE_CONFIG_FILE_PATH );

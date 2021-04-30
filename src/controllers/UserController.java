@@ -56,6 +56,7 @@ public class UserController {
         IPasswordManager passwordManager = new PasswordManager();
 
         if(selection == Constants.SELECT_ADD_USER_MODE){
+
             //display add user form
             System.out.println("\nADD NEW USER\n");
             System.out.print("USER NAME: ");
@@ -83,6 +84,7 @@ public class UserController {
             System.out.println( Constants.USER_ADDED_SUCCESSFULLY_MESSAGE );
 
         }else if( selection == Constants.SELECT_LOGIN_MODE ){
+
             //display Login
             System.out.println("LOGIN\n");
             System.out.print("USER NAME: ");

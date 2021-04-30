@@ -25,5 +25,5 @@ public final class Constants {
     public static final String DATABASE_FIELD_PASSWORD= "password";
 
     //database configuration file path
-    public static final String DATABASE_CONFIG_FILE_PATH = "E:\\spring\\javastandalonelogin\\src\\Utils\\config.properties";
+    public static final String DATABASE_CONFIG_FILE_PATH = "E:\\spring\\javastandalonelogin\\src\\util\\config.properties";
 }

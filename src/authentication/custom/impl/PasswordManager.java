@@ -4,6 +4,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import authentication.IPasswordManager;
 
+
 public class PasswordManager implements IPasswordManager{
 
     @Override
